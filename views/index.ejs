@@ -1,0 +1,38 @@
+<%- include('header.ejs') %> 
+<%- include('nav.ejs') %> 
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+    <script>
+        var socket = io();
+
+        var messages = document.getElementById('messages');
+        var input = document.getElementById('input');
+        var form = document.getElementById('form');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('chat message', input.value);
+                input.value = '';
+            }
+        });
+
+        socket.on('chat message', (msg) => {
+            var item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+        })
+
+        socket.on('status', (msg) => {
+            var item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+        })
+
+        var username = prompt("What's your name?");
+        socket.emit('username', username);
+    </script>
+
+<%- include('footer.ejs') %> 
